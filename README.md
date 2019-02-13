@@ -63,3 +63,35 @@ Then, by computing the matrix product Xθ, we have
 
 In the last equality, we used the fact that $$a^Tb = b^Ta$$ if `a` and `b` are vectors.
 This allows us to compute the products $$θ^Tx^{(i)}$$ for all our examples `i` in one line of code.
+Unregularized cost function is implemented in the file `lrCostFunction.m`
+```matlab
+function [J, grad] = lrCostFunction(theta, X, y, lambda)
+    m = length(y); % number of training examples
+    J = ( (1 / m) * sum(-y'*log(sigmoid(X*theta)) - (1-y)'*log( 1 - sigmoid(X*theta))) ) + (lambda/(2*m))*sum(theta(2:length(theta)).*theta(2:length(theta))) ;
+    
+    grad = (1 / m) * sum( X .* repmat((sigmoid(X*theta) - y), 1, size(X,2)) );
+    grad(:,2:length(grad)) = grad(:,2:length(grad)) + (lambda/m)*theta(2:length(theta))';
+    grad = grad(:);
+end
+```
+
+#### Vectorizing the gradient
+Recall that the gradient of the (unregularized) logistic regression cost is a vector where the $$j^{th}$$ element is defined as
+
+![gradient](https://i.imgur.com/Ut9Q1fC.png)
+
+To vectorize this operation over the dataset, we start by writing out all the partial derivatives explicitly for all $$θ_j$$,
+
+![](https://i.imgur.com/IYHN1rE.png)
+
+where
+
+![](https://i.imgur.com/5OEnkfk.png)
+
+Note that $$x^{(i)}$$ is a vector, while $$(h_θ(x^{(i)})-y^{(i)})$$ is a scalar (single number).
+To understand the last step of the derivation, let $$β_{i}=(h_{θ}(x^{(i)})-y^{(i)})$$ and
+observe that:
+
+![](https://i.imgur.com/55xa2xV.png)
+
+The expression above allows us to compute all the partial derivatives without any loops.
