@@ -151,8 +151,48 @@ In `ex3.m` we will call `predictOneVsAll` function using the learned value of Θ
 
 ## Neural Networks
 
-In this part we will implement a neural network to recognize handwritten digits using the same training set as before. The neural network will be able to represent complex models that form non-linear hypotheses. For this week, you will be using parameters from a neural network
-that we have already trained. Your goal is to implement the feedforward
-propagation algorithm to use our weights for prediction. In next week’s exercise, you will write the backpropagation algorithm for learning the neural
-network parameters.
-The provided script, ex3 nn.m, will help you step through this exercise.
+In this part we will implement a neural network to recognize handwritten digits using the same training set as before. The neural network will be able to represent complex models that form non-linear hypotheses. We will be using parameters from a neural network that have been already trained. Our goal is to implement the feedforward
+propagation algorithm to use our weights for prediction. In next project, we will write the backpropagation algorithm for learning the neural network parameters.
+We start with the provided script `ex3_nn.m`.
+
+### Model representation
+
+Our neural network is shown in Figure 2. It has 3 layers - an input layer, a hidden layer and an output layer. Recall that our inputs are pixel values of digit images. Since the images are of size 20×20, this gives us 400 input layer units (excluding the extra bias unit which always outputs +1). As before, the training data will be loaded into the variables X and y.
+You have been provided with a set of network parameters $$(Θ^{(1)},Θ^{(2)})$$ already trained. These are stored in `ex3weights.mat` and will be loaded by `ex3_nn.m` into Theta1 and Theta2. The parameters have dimensions that are sized for a neural network with 25 units in the second layer and 10 output units (corresponding to the 10 digit classes).
+
+![](https://i.imgur.com/cyIj1JY.png)
+***Figure 2: Neural network model***
+
+### Feedforward Propagation and Prediction
+
+Now we will implement feedforward propagation for the neural network. We will need to complete the code in `predict.m` to return the neural network’s prediction.
+You shall implement the feedforward computation that computes $$h_θ(x^{(i)})$$ for every example `i` and returns the associated predictions. Similar to the one-vs-all classification strategy, the prediction from the neural network will
+be the label that has the largest output $$(h_θ(x))_k$$.
+
+```matlab
+function p = predict(Theta1, Theta2, X)
+    m = size(X, 1);
+    num_labels = size(Theta2, 1);
+    p = zeros(size(X, 1), 1);
+    a1 = [ones(m, 1) X];
+    z2 = a1 * Theta1';
+    a2 = sigmoid(z2);
+    a2 = [ones(size(a2,1), 1) a2];
+    z3 = a2 * Theta2';
+    a3 = sigmoid(z3);
+    [val, index] = max(a3,[],2);
+    p = index;
+end
+```
+
+Now we can execute `ex3_nn.m` which will call our predict function using the loaded set of parameters for Theta1 and Theta2. You should see that the accuracy is about 97.5%. After that, an interactive sequence will launch displaying images from the training set one at a time, while the console prints out the predicted label for the displayed image. 
+
+![](https://i.imgur.com/uBNPJ6V.png)
+
+![](https://i.imgur.com/Ft8oVuv.png)
+
+![](https://i.imgur.com/kvAhul4.png)
+
+![](https://i.imgur.com/xk0G8Rw.png)
+
+![](https://i.imgur.com/43G2uw1.png)
